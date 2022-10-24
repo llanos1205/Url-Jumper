@@ -157,3 +157,5 @@ yarn-error.log*
 *.njsproj
 *.sln
 *.sw*
+.terraform.lock.hcl
+.terraform/
