@@ -159,3 +159,4 @@ yarn-error.log*
 *.sw*
 .terraform.lock.hcl
 .terraform/
+.credentials
