@@ -8,10 +8,12 @@ on:
     branches: [ "main" ]
     paths:
       - infra/**
+      - .github/workflows/infra-pipeline.yml
   pull_request:
     branches: [ "main" ]
     paths:
       - infra/**
+      - .github/workflows/infra-pipeline.yml
 
 jobs:
   build:

@@ -8,10 +8,12 @@ on:
     branches: [ "main" ]
     paths:
       - client/**
+      - .github/workflows/client-pipeline.yml
   pull_request:
     branches: [ "main" ]
     paths:
       - client/**
+      - .github/workflows/client-pipeline.yml
 
 jobs:
   build:
