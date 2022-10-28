@@ -1,40 +1,34 @@
 <template>
-  <input type="text" v-model="input" placeholder="Search fruits..." />
-  <div class="item fruit" v-for="conn in fetchConnections()" :key="conn['created']">
-    <p>{{ conn['short_link'] }}</p>
+  <h1>URL JUMPER</h1>
+  <input type="text" v-model="input" placeholder="Search your link..." />
+  <div class="item fruit" v-for="(conn,index) in items" :key="index">
+    <p>{{ conn.short_link }} = {{ conn.long_link }}</p>
   </div>
-  <div class="item error" v-if="input && !fetchConnections().length">
-    <p>No results found!</p>
+  <div class="item error" v-if="input&&!filteredList().length">
+      <p>No results found!</p>
   </div>
 </template>
-<script lang="ts">
-import { defineComponent, ref } from 'vue'
-import axios from 'axios'
-const input=ref('')
-interface Connections {
-  short_link: string,
-  long_link: string,
-  created: string
-}
-export default defineComponent({
-  name: 'Connections',
+<script>
+import axios from "axios";
+export default {
+  name: "Connections",
   data() {
     return {
-      catFacts: [] as Connections[],
-      fetchingFacts: false
+      input:'',
+      items: [],
+    };
+  },
+  async created() {
+    try {
+      const res = await axios.get('http://127.0.0.1:8000/redirector/connections/');
+      this.items = res.data;
+    } catch (error) {
+      console.log(error);
     }
   },
-  methods: {
-    async fetchConnections() {
-      const catFactsResponse = await axios.get<Connections[]>('http://127.0.0.1:8000/redirector/connections/')
-      this.catFacts = catFactsResponse.data
-    }
-  },
-  async mounted() {
-    await this.fetchConnections()
-  }
-})
+};
 </script>
+
 <style>
 @import url("https://fonts.googleapis.com/css2?family=Montserrat&display=swap");
 
