@@ -32,7 +32,8 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
-    ]
+    ],
+    'TEST_REQUEST_DEFAULT_FORMAT': 'json'
 }
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -89,9 +90,6 @@ DATABASES = {
             'ENFORCE_SCHEMA': False,
             'CLIENT': {
                 'host': os.getenv('MONGO_URL')
-              #  'port': port_number,
-                # 'username': os.getenv('MONGO_URL'),
-                # 'password': os.getenv('MONGO_URL')
             },
             'LOGGING': {
                 'version': 1,
@@ -147,8 +145,7 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOWED_ORIGINS = [
-    "https://example.com",
-    "https://sub.example.com",
+   
     "http://localhost:8080",
     "http://127.0.0.1:8000",
     "http://localhost:5173"

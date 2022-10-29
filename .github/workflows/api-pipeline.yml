@@ -15,6 +15,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment: 'dev'
     strategy:
       max-parallel: 4
       matrix:
@@ -32,13 +33,16 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
     - name: Run Tests
+      env:
+        MONGO_URL: '${{ secrets.MONGO_URL }}'
       working-directory: ./api
       run: |
-        python manage.py test
+        python manage.py test --keepdb
 
   package:
     needs: build
     runs-on: ubuntu-latest
+    environment: 'dev'
     strategy:
       max-parallel: 4
       matrix:
