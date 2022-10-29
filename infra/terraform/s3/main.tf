@@ -2,6 +2,7 @@ resource "aws_s3_bucket" "web_bucket" {
   bucket = "www.${var.bucket_name}"
   policy = templatefile("./s3/s3-policy.json", { bucket = "www.${var.bucket_name}" })
   tags   = var.common_tags
+  force_destroy = true
 }
 resource "aws_s3_bucket_acl" "web_bucket_aclconfig" {
   bucket = aws_s3_bucket.web_bucket.id
@@ -41,6 +42,8 @@ resource "aws_s3_bucket" "root_bucket" {
   bucket = var.bucket_name
   policy = templatefile("./s3/s3-policy.json", { bucket = var.bucket_name })
   tags = var.common_tags
+  force_destroy = true
+
 }
 
 resource "aws_s3_bucket_acl" "root_bucket_aclconfig" {
