@@ -49,6 +49,7 @@ jobs:
           path: ./client/dist/*
 
   deploy:
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v2
