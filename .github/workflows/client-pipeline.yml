@@ -5,19 +5,18 @@ name: Client CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
     paths:
       - client/**
       - .github/workflows/client-pipeline.yml
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
     paths:
       - client/**
       - .github/workflows/client-pipeline.yml
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     strategy:
@@ -26,27 +25,39 @@ jobs:
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-        cache-dependency-path: ./client/package-lock.json
-        
-    - name: Install Dependencies
-      run: npm install
-      working-directory: ./client
-      
-    - name: build package
-      run: npm run build 
-      working-directory: ./client
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
 
-    - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v3.1.1
-      with:
-        name: client_artifact
-        path: ./client/dist/*
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+          cache-dependency-path: ./client/package-lock.json
 
- 
+      - name: Install Dependencies
+        run: npm install
+        working-directory: ./client
+
+      - name: build package
+        run: npm run build
+        working-directory: ./client
+
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v3.1.1
+        with:
+          name: client_artifact
+          path: ./client/dist/*
+
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: client_artifact
+          path: ./client_artifact
+
+      - run: aws s3 sync ./client_artifact s3://www.llanoscorp.com --region us-east-1 --cache-control max-age=0 --acl public-read --delete
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: us-east-1

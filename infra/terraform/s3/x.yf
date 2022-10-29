@@ -1,0 +1,35 @@
+resource "aws_s3_bucket" "web_bucket" {
+  bucket = vars.bucket_name
+  cors_rule {
+    allowed_headers = ["*"]
+    allowed_methods = ["PUT","POST"]
+    allowed_origins = ["*"]
+    expose_headers = ["ETag"]
+    max_age_seconds = 3000
+  
+}
+
+resource "aws_s3_bucket_acl" "web_bucket_config" {
+  bucket = aws_s3_bucket.web_bucket.id
+  acl    = "public-read"
+}
+resource "aws_s3_bucket_website_configuration" "web_bucket_webconfig" {
+  bucket = aws_s3_bucket.web_bucket.bucket
+
+  index_document {
+    suffix = "index.html"
+  }
+
+  error_document {
+    key = "index.html"
+  }
+}
+
+resource "aws_s3_bucket" "website_redirect" {
+  bucket = "www.${var.bucket_name}"
+  acl = "public-read"
+
+  website {
+    redirect_all_requests_to = "${var.bucket_name}"
+  }
+}
