@@ -35,6 +35,7 @@ jobs:
     - name: Run Tests
       env:
         MONGO_URL: '${{ secrets.MONGO_URL }}'
+        DJANGO_KEY: '${{ secrets.DJANGO_KEY }}'
       working-directory: ./api
       run: |
         python manage.py test --keepdb
