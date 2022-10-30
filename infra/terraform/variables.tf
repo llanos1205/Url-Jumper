@@ -12,7 +12,3 @@ variable "s3_bucket_name" {
   description = "The name of the bucket without the sub-domain prefix. Normally domain_name."
 }
 
-variable "s3_common_tags" {
-  description = "Common tags you want applied to all components."
-}
-
