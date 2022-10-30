@@ -10,3 +10,16 @@ module "www-bucket" {
     Environment = var.tf_environment
   }
 }
+
+module "cloudfront" {
+  source = "./CloudFront"
+  s3_domain_name = var.s3_domain_name
+  s3_root_bucket_name = var.s3_bucket_name
+  s3_www_bucket_name = var.s3_bucket_name
+  s3_www_website_endpoint = module.www-bucket.s3_www_website_endpoint
+  s3_root_website_endpoint = module.www-bucket.s3_root_website_endpoint
+  common_tags = {
+    Project     = "url-jumper"
+    Environment = var.tf_environment
+  }
+}

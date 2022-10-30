@@ -1,13 +1,19 @@
-variable "domain_name" {
-  type = string
-  description = "The domain name for the website."
+variable "s3_www_website_endpoint" {
+  type        = string
 }
-
-variable "bucket_name" {
-  type = string
-  description = "The name of the bucket without the www. prefix. Normally domain_name."
+variable "s3_www_bucket_name" {
+  type        = string
 }
-
+variable "s3_domain_name" {
+  type        = string
+}
+variable "s3_root_website_endpoint" {
+  type        = string
+}
+variable "s3_root_bucket_name" {
+  type        = string
+}
 variable "common_tags" {
   description = "Common tags you want applied to all components."
 }
+
