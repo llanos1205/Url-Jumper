@@ -12,6 +12,13 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 from pathlib import Path
 import os
+import boto3
+import json
+secret_client = boto3.client('secretsmanager')
+secrets=json.loads(secret_client.get_secret_value(SecretId='dev/url-jumper/mongodb/credentials')['SecretString'])
+
+
+#appconfig_client = boto3.client('appconfig')
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -20,7 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('DJANGO_KEY')
+SECRET_KEY = secrets['DjangoKey']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -89,7 +96,7 @@ DATABASES = {
             'NAME': 'url-jumper',
             'ENFORCE_SCHEMA': False,
             'CLIENT': {
-                'host': os.getenv('MONGO_URL')
+                'host': secrets['ConnectionString']
             },
             'LOGGING': {
                 'version': 1,
