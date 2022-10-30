@@ -11,13 +11,23 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
-import os
+from appconfig_helper import AppConfigHelper
 import boto3
 import json
+import os
 secret_client = boto3.client('secretsmanager')
-secrets=json.loads(secret_client.get_secret_value(SecretId='dev/url-jumper/mongodb/credentials')['SecretString'])
-
-
+secrets = json.loads(
+    secret_client.get_secret_value(
+        SecretId='dev/url-jumper/mongodb/credentials'
+    )['SecretString']
+)
+appconfig = AppConfigHelper(
+    "url-jumper",
+    os.getenv('DJANGO_ENVIRONMENT'),
+    "appConfig.json",
+    45  # minimum interval between update checks
+)
+appconfig.update_config()
 #appconfig_client = boto3.client('appconfig')
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -30,9 +40,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = secrets['DjangoKey']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = appconfig.config["debug"]
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = appconfig.config["allowed_hosts"]
 
 
 REST_FRAMEWORK = {
@@ -91,24 +101,24 @@ WSGI_APPLICATION = 'url_jumper.wsgi.application'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 DATABASES = {
-        'default': {
-            'ENGINE': 'djongo',
-            'NAME': 'url-jumper',
-            'ENFORCE_SCHEMA': False,
-            'CLIENT': {
+    'default': {
+        'ENGINE': 'djongo',
+        'NAME': 'url-jumper',
+        'ENFORCE_SCHEMA': False,
+        'CLIENT': {
                 'host': secrets['ConnectionString']
+        },
+        'LOGGING': {
+            'version': 1,
+            'loggers': {
+                'djongo': {
+                    'level': 'DEBUG',
+                    'propagate': False,
+                }
             },
-            'LOGGING': {
-                'version': 1,
-                'loggers': {
-                    'djongo': {
-                        'level': 'DEBUG',
-                        'propagate': False,                        
-                    }
-                },
-             },
-        }
+        },
     }
+}
 
 
 # Password validation
@@ -151,9 +161,4 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-CORS_ALLOWED_ORIGINS = [
-   
-    "http://localhost:8080",
-    "http://127.0.0.1:8000",
-    "http://localhost:5173"
-]
+CORS_ALLOWED_ORIGINS = appconfig.config["cors_allowed_origins"]
