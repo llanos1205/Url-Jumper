@@ -39,7 +39,7 @@ jobs:
         working-directory: ./client
 
       - name: build package
-        run: npm run build-dev
+        run: npm run build-prod
         working-directory: ./client
 
       - name: Upload a Build Artifact
