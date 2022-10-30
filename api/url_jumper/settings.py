@@ -18,7 +18,7 @@ import os
 secret_client = boto3.client('secretsmanager')
 secrets = json.loads(
     secret_client.get_secret_value(
-        SecretId='dev/url-jumper/mongodb/credentials'
+        SecretId='{django_env}/url-jumper/mongodb/credentials'.format(django_env= os.getenv('DJANGO_ENVIRONMENT'),)
     )['SecretString']
 )
 appconfig = AppConfigHelper(
