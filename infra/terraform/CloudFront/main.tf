@@ -16,7 +16,7 @@ resource "aws_cloudfront_distribution" "www_s3_distribution" {
   is_ipv6_enabled     = true
   default_root_object = "index.html"
   aliases             = ["www.${var.s3_domain_name}"]
-
+  price_class = "PriceClass_100"
   custom_error_response {
     error_caching_min_ttl = 0
     error_code            = 404
@@ -25,8 +25,8 @@ resource "aws_cloudfront_distribution" "www_s3_distribution" {
   }
 
   default_cache_behavior {
-    allowed_methods  = ["GET", "HEAD"]
-    cached_methods   = ["GET", "HEAD"]
+    allowed_methods  = ["GET", "HEAD","OPTIONS"]
+    cached_methods   = ["GET", "HEAD","OPTIONS"]
     target_origin_id = "S3-www.${var.s3_www_bucket_name}"
     forwarded_values {
       query_string = false
@@ -51,7 +51,7 @@ resource "aws_cloudfront_distribution" "www_s3_distribution" {
   viewer_certificate {
     acm_certificate_arn      = data.aws_acm_certificate.acm_certificate.arn
     ssl_support_method       = "sni-only"
-    minimum_protocol_version = "TLSv1.1_2016"
+    minimum_protocol_version = "TLSv1.2_2021"
   }
 
   tags = var.common_tags
@@ -69,15 +69,15 @@ resource "aws_cloudfront_distribution" "root_s3_distribution" {
       origin_ssl_protocols   = ["TLSv1", "TLSv1.1", "TLSv1.2"]
     }
   }
-
+  price_class = "PriceClass_100"
   enabled         = true
   is_ipv6_enabled = true
 
   aliases = [var.s3_domain_name]
 
   default_cache_behavior {
-    allowed_methods  = ["GET", "HEAD"]
-    cached_methods   = ["GET", "HEAD"]
+    allowed_methods  = ["GET", "HEAD","OPTIONS"]
+    cached_methods   = ["GET", "HEAD","OPTIONS"]
     target_origin_id = "S3-.${var.s3_root_bucket_name}"
 
     forwarded_values {
@@ -105,7 +105,7 @@ resource "aws_cloudfront_distribution" "root_s3_distribution" {
   viewer_certificate {
     acm_certificate_arn      = data.aws_acm_certificate.acm_certificate.arn
     ssl_support_method       = "sni-only"
-    minimum_protocol_version = "TLSv1.1_2016"
+    minimum_protocol_version = "TLSv1.2_2021"
   }
 
   tags = var.common_tags

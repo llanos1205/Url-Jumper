@@ -1,7 +1,7 @@
 resource "aws_s3_bucket" "web_bucket" {
-  bucket = "www.${var.bucket_name}"
-  policy = templatefile("./s3/s3-policy.json", { bucket = "www.${var.bucket_name}" })
-  tags   = var.common_tags
+  bucket        = "www.${var.bucket_name}"
+  policy        = templatefile("./s3/s3-policy.json", { bucket = "www.${var.bucket_name}" })
+  tags          = var.common_tags
   force_destroy = true
 }
 resource "aws_s3_bucket_acl" "web_bucket_aclconfig" {
@@ -39,9 +39,9 @@ resource "aws_s3_bucket_website_configuration" "web_bucket_webconfig" {
 
 
 resource "aws_s3_bucket" "root_bucket" {
-  bucket = var.bucket_name
-  policy = templatefile("./s3/s3-policy.json", { bucket = var.bucket_name })
-  tags = var.common_tags
+  bucket        = var.bucket_name
+  policy        = templatefile("./s3/s3-policy.json", { bucket = var.bucket_name })
+  tags          = var.common_tags
   force_destroy = true
 
 }
@@ -49,14 +49,14 @@ resource "aws_s3_bucket" "root_bucket" {
 resource "aws_s3_bucket_acl" "root_bucket_aclconfig" {
   bucket = aws_s3_bucket.root_bucket.id
   acl    = "public-read"
-  
+
 }
 
 resource "aws_s3_bucket_website_configuration" "root_bucket_webconfig" {
-  bucket                   = aws_s3_bucket.root_bucket.bucket
+  bucket = aws_s3_bucket.root_bucket.bucket
   redirect_all_requests_to {
     host_name = "https://www.${var.domain_name}"
-    protocol = "https"
+    protocol  = "https"
   }
 
 }
