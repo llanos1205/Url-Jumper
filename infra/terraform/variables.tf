@@ -9,4 +9,9 @@ variable "s3_domain_name" {
 variable "s3_bucket_name" {
   type = string
 }
-
+variable "vpc_cidr" {
+  type = string
+}
+variable "vpc_subnets" {
+  type = list(any)
+}

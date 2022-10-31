@@ -7,12 +7,12 @@ on:
   push:
     branches: [ "main" ]
     paths:
-      - infra/**
+      - infra/templates/**
       - .github/workflows/infra-pipeline.yml
   pull_request:
     branches: [ "main" ]
     paths:
-      - infra/**
+      - infra/templates/**
       - .github/workflows/infra-pipeline.yml
 
 jobs:
