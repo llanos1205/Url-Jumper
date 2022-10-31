@@ -1,6 +1,8 @@
 provider "aws" {
   region = "us-east-1"
 }
+
+
 module "www-bucket" {
   source      = "./s3"
   domain_name = var.s3_domain_name
@@ -24,7 +26,7 @@ module "cloudfront" {
   }
 }
 
-module "route53" {
+module "route53_client" {
   source                              = "./Route53"
   domain_name                         = var.s3_domain_name
   root_s3_distribution_domain_name    = module.cloudfront.root_dist_domain_name
