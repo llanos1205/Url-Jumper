@@ -1,6 +1,6 @@
+#WWW BUCKET
 resource "aws_s3_bucket" "web_bucket" {
   bucket        = "www.${var.bucket_name}"
-  policy        = templatefile("./s3/s3-policy.json", { bucket = "www.${var.bucket_name}" })
   tags          = var.common_tags
   force_destroy = true
 }
@@ -31,16 +31,14 @@ resource "aws_s3_bucket_website_configuration" "web_bucket_webconfig" {
   }
 }
 
+resource "aws_s3_bucket_policy" "www_allow_access_from_cloudfront" {
+  bucket = aws_s3_bucket.web_bucket.id
+  policy = templatefile("./s3/s3-policy.json", { bucket = "www.${var.bucket_name}" })
+}
 
-
-
-
-
-
-
+#ROOT BUCKET
 resource "aws_s3_bucket" "root_bucket" {
   bucket        = var.bucket_name
-  policy        = templatefile("./s3/s3-policy.json", { bucket = var.bucket_name })
   tags          = var.common_tags
   force_destroy = true
 
@@ -59,4 +57,9 @@ resource "aws_s3_bucket_website_configuration" "root_bucket_webconfig" {
     protocol  = "https"
   }
 
+}
+
+resource "aws_s3_bucket_policy" "root_allow_access_from_cloudfront" {
+  bucket = aws_s3_bucket.root_bucket.id
+  policy = templatefile("./s3/s3-policy.json", { bucket = var.bucket_name })
 }
