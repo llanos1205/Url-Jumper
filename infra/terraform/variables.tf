@@ -12,12 +12,15 @@ variable "s3_bucket_name" {
 variable "vpc_cidr" {
   type = string
 }
-variable "vpc_subnets" {
+variable "vpc_subnets_public" {
+  type = list(any)
+}
+variable "vpc_subnets_private" {
   type = list(any)
 }
 variable "root" {
   description = "if root bucket is needed"
-  default = false
+  default     = false
 }
 variable "s3_subdomain_name" {
   type        = string

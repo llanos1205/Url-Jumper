@@ -1,8 +1,14 @@
 variable "subnet_suffix" {
   type = string
 }
-variable "subnet_ranges" {
-  type = list(any)
+variable "cidr" {
+  type = string
+}
+variable "az" {
+  type = string
+}
+variable "id" {
+  type = string
 }
 variable "vpcid" {
   type = string

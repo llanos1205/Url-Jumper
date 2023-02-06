@@ -1,7 +1,10 @@
 variable "vpc_cidr" {
   type    = string
 }
-variable "subnets" {
+variable "public_subnets" {
+  type = list(any)
+}
+variable "private_subnets" {
   type = list(any)
 }
 variable "common_tags" {

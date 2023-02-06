@@ -1,19 +1,18 @@
-variable "s3_www_website_endpoint" {
+variable "subnet_suffix" {
   type = string
 }
-variable "s3_www_bucket_name" {
+variable "cidr" {
   type = string
 }
-variable "s3_domain_name" {
+variable "az" {
   type = string
 }
-variable "s3_root_website_endpoint" {
+variable "id" {
   type = string
 }
-variable "s3_root_bucket_name" {
+variable "vpcid" {
   type = string
 }
 variable "common_tags" {
   description = "Common tags you want applied to all components."
 }
-
