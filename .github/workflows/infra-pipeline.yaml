@@ -57,7 +57,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ vars.AWS_DEFAULT_REGION }}
       - name: tf init
-        run: terraform init  -reconfigure --backend-config=key='url_jumper/dev.tfstate' --backend-config="profile=default"
+        run: terraform init  -reconfigure  --backend-config=key='url_jumper/dev.tfstate' --backend-config="profile=default"
         working-directory: ./infra/terraform
       - name: tf apply dev
         run: terraform apply  -var-file=./envs/dev.tfvars --auto-approve
