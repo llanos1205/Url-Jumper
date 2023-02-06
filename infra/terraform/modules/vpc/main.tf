@@ -47,3 +47,23 @@ module "NAT" {
   common_tags = var.common_tags
 
 }
+
+module "Private-RT" {
+  source      = "./RouteTables"
+  count       = length(module.subnet-private)
+  subnet_id   = module.subnet-private["0${count.index+1}"].subnet_id
+  nat_id      = module.NAT["0${count.index+1}"].nat_id
+  igw_id      = ""
+  vpc_id      = aws_vpc.main.id
+  common_tags = var.common_tags
+}
+
+module "Public-RT" {
+  source      = "./RouteTables"
+  vpc_id      = aws_vpc.main.id
+  count       = length(module.subnet-public)
+  subnet_id   = module.subnet-public["0${count.index+1}"].subnet_id
+  nat_id      = ""
+  igw_id      = module.igw.igw_id
+  common_tags = var.common_tags
+}
