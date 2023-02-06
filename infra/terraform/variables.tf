@@ -15,3 +15,11 @@ variable "vpc_cidr" {
 variable "vpc_subnets" {
   type = list(any)
 }
+variable "root" {
+  description = "if root bucket is needed"
+  default = false
+}
+variable "s3_subdomain_name" {
+  type        = string
+  description = "The domain name for the website."
+}
