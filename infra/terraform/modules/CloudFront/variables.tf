@@ -1,16 +1,10 @@
 variable "s3_www_website_endpoint" {
   type = string
 }
-variable "s3_www_bucket_name" {
-  type = string
-}
 variable "s3_domain_name" {
   type = string
 }
-variable "s3_root_website_endpoint" {
-  type = string
-}
-variable "s3_root_bucket_name" {
+variable "s3_subdomain_name" {
   type = string
 }
 variable "common_tags" {
