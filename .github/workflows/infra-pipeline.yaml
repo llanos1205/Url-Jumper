@@ -1,23 +1,22 @@
 # This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
 
-name: Infrastructure CI
+name: Infrastructure
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
     paths:
       - infra/templates/**
       - .github/workflows/infra-pipeline.yml
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
     paths:
       - infra/templates/**
       - .github/workflows/infra-pipeline.yml
 
 jobs:
-  build:
-
+  plan-dev:
     runs-on: ubuntu-latest
 
     strategy:
@@ -26,4 +25,39 @@ jobs:
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
+      - name: tf init
+        run: terraform init  -reconfigure --backend-config=key='url_jumper/dev.tfstate'
+        working-directory: ./infra/terraform
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ vars.AWS_DEFAULT_REGION }}
+          AWS_PROFILE: ${{ vars.AWS_PROFILE }}
+      - name: tf validate
+        run: terraform validate
+        working-directory: ./infra/terraform
+      - name: tf plan dev
+        run: terraform plan  -var-file=./envs/dev.tfvars
+        working-directory: ./infra/terraform
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ vars.AWS_DEFAULT_REGION }}
+          AWS_PROFILE: ${{ vars.AWS_PROFILE }}
+
+  apply-dev:
+    needs: plan-dev
+    environment: dev
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: tf apply dev
+        run: terraform apply  -var-file=./envs/dev.tfvars --auto-approve
+        working-directory: ./infra/terraform
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ vars.AWS_DEFAULT_REGION }}
+          AWS_PROFILE: ${{ vars.AWS_PROFILE }}
