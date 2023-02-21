@@ -26,3 +26,21 @@ variable "s3_subdomain_name" {
   type        = string
   description = "The domain name for the website."
 }
+
+variable "ebsk_desc" {
+  type = string
+}
+
+variable "ebsk_instance_type" {
+  type = string
+}
+
+variable "ebsk_max_instances" {
+  type = string
+}
+variable "ebsk_min_instances" {
+  type = string
+}
+variable "ebsk_name" {
+  type = string
+}

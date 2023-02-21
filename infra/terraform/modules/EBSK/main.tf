@@ -3,11 +3,11 @@ resource "aws_elastic_beanstalk_application" "this" {
   description = var.application_desc
 }
 
-resource "aws_elastic_beanstalk_environment" "tfenvtest" {
+resource "aws_elastic_beanstalk_environment" "thisenv" {
   name                = var.application_name
   application         = aws_elastic_beanstalk_application.this.name
-  solution_stack_name = "64bit Amazon Linux 2015.03 v2.0.3 running Go 1.4"
-  tier                = var.tier
+  solution_stack_name = "64bit Amazon Linux 2 v3.4.4 running Python 3.8"
+  
   setting {
     namespace = "aws:ec2:vpc"
     name      = "VPCId"
@@ -16,7 +16,7 @@ resource "aws_elastic_beanstalk_environment" "tfenvtest" {
   setting {
     namespace = "aws:autoscaling:launchconfiguration"
     name      = "IamInstanceProfile"
-    value     = "aws-elasticbeanstalk-ec2-role"
+    value     = "EC2Role"
   }
   setting {
     namespace = "aws:ec2:vpc"
@@ -58,5 +58,6 @@ resource "aws_elastic_beanstalk_environment" "tfenvtest" {
     name      = "MaxSize"
     value     = var.max_instances
   }
+  
 
 }

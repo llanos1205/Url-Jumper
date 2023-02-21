@@ -12,7 +12,7 @@ resource "aws_vpc" "main" {
 }
 
 module "subnet-public" {
-  source        = "./subnet"
+  source        = "./Subnet"
   for_each      = { for subnet in var.public_subnets : subnet.id => subnet }
   cidr          = each.value.cidr
   az            = each.value.az
@@ -23,7 +23,7 @@ module "subnet-public" {
 }
 
 module "subnet-private" {
-  source        = "./subnet"
+  source        = "./Subnet"
   for_each      = { for subnet in var.private_subnets : subnet.id => subnet }
   cidr          = each.value.cidr
   az            = each.value.az
@@ -37,33 +37,45 @@ module "subnet-private" {
 module "igw" {
   source      = "./IGW"
   vpc_id      = aws_vpc.main.id
-  common_tags = var.common_tags
+  common_tags = merge(
+    var.common_tags,
+    { "Name" : "IGW" }
+  )
 }
 
 module "NAT" {
   source      = "./NatGW"
-  for_each    = module.subnet-private
-  subnet_id   = each.value.subnet_id
-  common_tags = var.common_tags
+  count       = length(module.subnet-private)
+  subnet_id   = module.subnet-private["0${count.index+1}"].subnet_id
+  common_tags = merge(
+    var.common_tags,
+    { "Name" : "NAT-${count.index+1}" }
+  )
 
 }
 
 module "Private-RT" {
   source      = "./RouteTables"
   count       = length(module.subnet-private)
-  subnet_id   = module.subnet-private["0${count.index+1}"].subnet_id
-  nat_id      = module.NAT["0${count.index+1}"].nat_id
+  subnet_ids   = ["${module.subnet-private["0${count.index+1}"].subnet_id}"]
+  nat_id      = module.NAT["0${count.index}"].nat_id
   igw_id      = ""
   vpc_id      = aws_vpc.main.id
-  common_tags = var.common_tags
+  common_tags = merge(
+    var.common_tags,
+    { "Name" : "PrivateRT-${count.index+1}" }
+  )
+
 }
 
 module "Public-RT" {
   source      = "./RouteTables"
   vpc_id      = aws_vpc.main.id
-  count       = length(module.subnet-public)
-  subnet_id   = module.subnet-public["0${count.index+1}"].subnet_id
+  subnet_ids   = values(module.subnet-public)[*].subnet_id
   nat_id      = ""
   igw_id      = module.igw.igw_id
-  common_tags = var.common_tags
+  common_tags = merge(
+    var.common_tags,
+    { "Name" : "PublicRT" }
+  )
 }

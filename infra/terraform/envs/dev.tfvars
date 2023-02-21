@@ -7,7 +7,7 @@ root              = false
 #BACK END
 vpc_cidr = "10.0.0.0/16"
 vpc_subnets_public = [
-  
+
   {
     "id"   = "01",
     "cidr" = "10.0.1.0/24",
@@ -23,11 +23,11 @@ vpc_subnets_public = [
     "cidr" = "10.0.3.0/24",
     "az"   = "us-east-1c"
   }
- 
+
 ]
 
 vpc_subnets_private = [
-  
+
   {
     "id"   = "01",
     "cidr" = "10.0.4.0/24",
@@ -43,5 +43,10 @@ vpc_subnets_private = [
     "cidr" = "10.0.6.0/24",
     "az"   = "us-east-1c"
   }
- 
+
 ]
+ebsk_name          = "url-jumper-dev"
+ebsk_desc          = "dev ebsk"
+ebsk_instance_type = "t3.micro"
+ebsk_max_instances = 1
+ebsk_min_instances = 1

@@ -7,10 +7,14 @@
 # }
 
 module "back_end" {
-  source          = "./components/back-end"
-  vpc_cidr        = var.vpc_cidr
+  source              = "./components/back-end"
+  vpc_cidr            = var.vpc_cidr
   vpc_subnets_private = var.vpc_subnets_private
   vpc_subnets_public  = var.vpc_subnets_public
-  tf_environment  = var.tf_environment
-
+  tf_environment      = var.tf_environment
+  ebsk_desc           = var.ebsk_desc
+  ebsk_instance_type  = var.ebsk_instance_type
+  ebsk_max_instances  = var.ebsk_max_instances
+  ebsk_min_instances  = var.ebsk_min_instances
+  ebsk_name           = var.ebsk_name
 }

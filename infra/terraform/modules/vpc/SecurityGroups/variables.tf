@@ -1,16 +1,18 @@
-variable "igw_id" {
+variable "subnet_suffix" {
   type = string
 }
-variable "nat_id" {
+variable "cidr" {
   type = string
 }
-variable "subnet_ids" {
-  type = list(string)
-}
-variable "vpc_id" {
+variable "az" {
   type = string
 }
-
+variable "id" {
+  type = string
+}
+variable "vpcid" {
+  type = string
+}
 variable "common_tags" {
   description = "Common tags you want applied to all components."
 }
