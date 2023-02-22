@@ -29,3 +29,12 @@ variable "min_instances" {
 variable "max_instances" {
   type = string
 }
+variable "security_groups" {
+  type = list(string)
+}
+variable "tf_environment" {
+  type = string
+}
+variable "domain_name" {
+  type = string
+}

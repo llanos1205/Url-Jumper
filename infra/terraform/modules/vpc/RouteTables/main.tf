@@ -18,6 +18,9 @@ resource "aws_route_table" "table" {
   tags = var.common_tags
 }
 resource "aws_route_table_association" "association" {
+  depends_on = [
+    aws_route_table.table
+  ]
   count  = length(var.subnet_ids)
   subnet_id      = var.subnet_ids[count.index]
   route_table_id = aws_route_table.table.id

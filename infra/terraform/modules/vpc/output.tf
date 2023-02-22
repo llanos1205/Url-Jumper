@@ -9,3 +9,6 @@ output "private_subnets" {
 output "public_subnets" {
   value = values(module.subnet-public)[*].subnet_id
 }
+output "internal_sg_id"{
+  value = module.Internal_SG.sg_id
+}

@@ -1,4 +1,10 @@
+variable "tf_environment" {
+  type = string
+}
 variable "vpc_cidr" {
+  type    = string
+}
+variable "vpc_name" {
   type    = string
 }
 variable "public_subnets" {
@@ -9,5 +15,9 @@ variable "private_subnets" {
 }
 variable "common_tags" {
   description = "Common tags you want applied to all components."
+}
+variable "sg_internal_rules" {
+}
+variable "sg_elb_rules" {
 }
 

@@ -1,8 +1,11 @@
 variable "tf_environment" {
   type = string
 }
+variable "vpc_name" {
+  type    = string
+}
 
-variable "s3_domain_name" {
+variable "domain_name" {
   type = string
 }
 
@@ -42,5 +45,12 @@ variable "ebsk_min_instances" {
   type = string
 }
 variable "ebsk_name" {
+  type = string
+}
+variable "sg_internal_rules" {
+}
+variable "sg_elb_rules" {
+}
+variable "ebsk_subdomain_name" {
   type = string
 }
