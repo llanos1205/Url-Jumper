@@ -1,5 +1,4 @@
 name: API CI
-
 on:
   push:
     branches: ["main"]
