@@ -19,11 +19,9 @@ on:
 jobs:
   build-dev:
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
         node-version: [19.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
       - uses: actions/checkout@v3
@@ -46,8 +44,38 @@ jobs:
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v3.1.1
         with:
-          name: client_artifact
-          path: ./client/dist/*
+          name: client_artifact_dev
+          path: ./client/dist/dev/*
+
+  build-prod:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [19.x]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+          cache-dependency-path: ./client/package-lock.json
+
+      - name: Install Dependencies
+        run: npm install
+        working-directory: ./client
+
+      - name: build package
+        run: npm run build-prod
+        working-directory: ./client
+
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v3.1.1
+        with:
+          name: client_artifact_prod
+          path: ./client/dist/prod/*
 
   deploy-dev:
     needs: build-dev
@@ -56,19 +84,44 @@ jobs:
     steps:
       - uses: actions/download-artifact@v2
         with:
-          name: client_artifact
-          path: ./client_artifact
+          name: client_artifact_dev
+          path: ./client_artifact/dev
+
       - name: Configure AWS Credentials Action For GitHub Actions
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ vars.AWS_DEFAULT_REGION }}
-      - name: push to s3
-        run: aws s3 sync ./client_artifact s3://dev.llanoscorp.com --region us-east-1 --cache-control max-age=0 --acl public-read --delete
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: us-east-1
 
-  
+      - name: push to s3
+        run: aws s3 sync ./client_artifact/dev ${{ vars.CLIENT_BUCKET }} --region ${{ vars.AWS_DEFAULT_REGION }} --cache-control max-age=0 --acl public-read --delete
+
+      - name: push to s3
+        run: aws cloudfront create-invalidation --distribution-id ${{ vars.CLIENT_CDN }} --paths "/*"
+
+  deploy-prod:
+    needs: 
+    - build-prod
+    - deploy-dev
+    runs-on: ubuntu-latest
+    environment: prod
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: client_artifact_prod
+          path: ./client_artifact/prod
+
+      - name: Configure AWS Credentials Action For GitHub Actions
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ vars.AWS_DEFAULT_REGION }}
+
+      - name: push to s3
+        run: aws s3 sync ./client_artifact/prod ${{ vars.CLIENT_BUCKET }} --region ${{ vars.AWS_DEFAULT_REGION }} --cache-control max-age=0 --acl public-read --delete
+
+      - name: push to s3
+        run: aws cloudfront create-invalidation --distribution-id ${{ vars.CLIENT_CDN }} --paths "/*"
+

@@ -1,0 +1,11 @@
+{
+    "AWSEBDockerrunVersion": "1",
+    "Image": {
+      "Name": "xx.dkr.ecr.us-east-1.amazonaws.com/your-web-app:latest"
+    },
+    "Ports": [
+      {
+        "ContainerPort": 3000
+      }
+    ]
+  }

@@ -8,12 +8,12 @@ on:
   push:
     branches: ["main"]
     paths:
-      - infra/templates/**
+      - infra/**
       - .github/workflows/infra-pipeline.yml
   pull_request:
     branches: ["main"]
     paths:
-      - infra/templates/**
+      - infra/**
       - .github/workflows/infra-pipeline.yml
 
 jobs:
@@ -21,21 +21,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
       - name: Configure AWS Credentials Action For GitHub Actions
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ vars.AWS_DEFAULT_REGION }}
+
       - name: tf init
-        run: terraform init  -reconfigure --backend-config=key='url_jumper/dev.tfstate' --backend-config="profile=default"
+        run: terraform init  -reconfigure --backend-config=key='${{vars.TF_STATE_KEY}}'
         working-directory: ./infra/terraform
 
       - name: tf validate
         run: terraform validate
         working-directory: ./infra/terraform
+
       - name: tf plan dev
-        run: terraform plan  -var-file=./envs/dev.tfvars
+        run: terraform plan  -var-file=${{vars.TF_ENV_VARS}}
         working-directory: ./infra/terraform
 
   apply-dev:
@@ -50,9 +53,11 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ vars.AWS_DEFAULT_REGION }}
+
       - name: tf init
-        run: terraform init  -reconfigure  --backend-config=key='url_jumper/dev.tfstate' --backend-config="profile=default"
+        run: terraform init  -reconfigure  --backend-config=key='${{vars.TF_STATE_KEY}}'
         working-directory: ./infra/terraform
+
       - name: tf apply dev
-        run: terraform apply  -var-file=./envs/dev.tfvars --auto-approve
+        run: terraform apply  -var-file=${{vars.TF_ENV_VARS}} --auto-approve
         working-directory: ./infra/terraform

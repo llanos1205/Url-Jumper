@@ -6,8 +6,8 @@
     "local": "vite --mode local",
     "prod": "vite --mode production",
     "build": "vite build --mode local",
-    "build-dev": "vite build --mode development",
-    "build-prod": "vite build --mode production",
+    "build-dev": "vite build --mode development --outDir=dist/dev/",
+    "build-prod": "vite build --mode production --outDir=dist/prod/",
     "preview": "vite preview"
   },
   "dependencies": {
