@@ -14,7 +14,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    environment: "dev"
     strategy:
       max-parallel: 4
       matrix:
@@ -51,11 +50,6 @@ jobs:
   package:
     needs: build
     runs-on: ubuntu-latest
-    environment: "dev"
-    strategy:
-      max-parallel: 4
-      matrix:
-        python-version: [3.8]
     steps:
       - uses: actions/checkout@v3
       - uses: docker/setup-buildx-action@v1
@@ -76,10 +70,6 @@ jobs:
     needs: package
     runs-on: ubuntu-latest
     environment: "dev"
-    strategy:
-      max-parallel: 4
-      matrix:
-        python-version: [3.8]
     steps:
       - name: Configure AWS Credentials Action For GitHub Actions
         uses: aws-actions/configure-aws-credentials@v1
@@ -91,20 +81,16 @@ jobs:
       - name: push to s3
         run: aws s3 cp api/Dockerrun.aws.json ${{vars.API_BUCKET}}/dev/Dockerrun.aws.json
 
-      - name: push to s3
-        run: aws elasticbeanstalk create-application-version --application-name ${{ vars.EBSK_APPLICATION }} --version-label $APP_VERSION --source-bundle S3Bucket=${{vars.API_BUCKET}},S3Key=dev/Dockerrun.aws.json
+      - name: create application version esk
+        run: aws elasticbeanstalk create-application-version --application-name ${{ vars.EBSK_APPLICATION }} --version-label ${{vars.APP_VERSION}} --source-bundle S3Bucket=${{vars.API_BUCKET}},S3Key=dev/Dockerrun.aws.json
 
-      - name: push to s3
-        run: aws elasticbeanstalk update-environment --application-name ${{ vars.EBSK_APPLICATION }} --environment-name ${{ vars.EBSK_APPLICATION_ENV }} --version-label=$APP_VERSION
+      - name: update environment ebsk
+        run: aws elasticbeanstalk update-environment --application-name ${{ vars.EBSK_APPLICATION }} --environment-name ${{ vars.EBSK_APPLICATION_ENV }} --version-label=${{vars.APP_VERSION}}
 
   deploy-prod:
     needs: deploy-dev
     runs-on: ubuntu-latest
     environment: "prod"
-    strategy:
-      max-parallel: 4
-      matrix:
-        python-version: [3.8]
     steps:
       - name: Configure AWS Credentials Action For GitHub Actions
         uses: aws-actions/configure-aws-credentials@v1
@@ -114,10 +100,10 @@ jobs:
           aws-region: ${{ vars.AWS_DEFAULT_REGION }}
 
       - name: push to s3
-        run: aws s3 cp api/Dockerrun.aws.json ${{vars.API_BUCKET}}/dev/Dockerrun.aws.json
+        run: aws s3 cp api/Dockerrun.aws.json ${{vars.API_BUCKET}}/prod/Dockerrun.aws.json
 
-      - name: push to s3
-        run: aws elasticbeanstalk create-application-version --application-name ${{ vars.EBSK_APPLICATION }} --version-label $APP_VERSION --source-bundle S3Bucket=${{vars.API_BUCKET}},S3Key=dev/Dockerrun.aws.json
+      - name: create application version esk
+        run: aws elasticbeanstalk create-application-version --application-name ${{ vars.EBSK_APPLICATION }} --version-label ${{vars.APP_VERSION}} --source-bundle S3Bucket=${{vars.API_BUCKET}},S3Key=prod/Dockerrun.aws.json
 
-      - name: push to s3
-        run: aws elasticbeanstalk update-environment --application-name ${{ vars.EBSK_APPLICATION }} --environment-name ${{ vars.EBSK_APPLICATION_ENV }} --version-label=$APP_VERSION
+      - name: update environment ebsk
+        run: aws elasticbeanstalk update-environment --application-name ${{ vars.EBSK_APPLICATION }} --environment-name ${{ vars.EBSK_APPLICATION_ENV }} --version-label=${{vars.APP_VERSION}}

@@ -85,6 +85,11 @@ resource "aws_elastic_beanstalk_environment" "thisenv" {
     name      = "MaxSize"
     value     = var.max_instances
   }
+  setting {
+    namespace = "aws:elasticbeanstalk:application:environment"
+    name      = "DJANGO_ENVIRONMENT"
+    value     = var.tf_environment
+  }
 
 
 }

@@ -99,9 +99,7 @@ jobs:
         run: aws cloudfront create-invalidation --distribution-id ${{ vars.CLIENT_CDN }} --paths "/*"
 
   deploy-prod:
-    needs: 
-    - build-prod
-    - deploy-dev
+    needs: build-prod
     runs-on: ubuntu-latest
     environment: prod
     steps:
