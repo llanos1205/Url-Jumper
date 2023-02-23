@@ -18,13 +18,13 @@ import os
 secret_client = boto3.client('secretsmanager')
 secrets = json.loads(
     secret_client.get_secret_value(
-        SecretId='{django_env}/url-jumper/mongodb/credentials'.format(django_env= os.getenv('DJANGO_ENVIRONMENT'),)
+        SecretId='{django_env}/url-jumper/mongodb/credentials'.format(django_env= os.getenv('DJANGO_ENVIRONMENT'))
     )['SecretString']
 )
 appconfig = AppConfigHelper(
     "url-jumper",
     os.getenv('DJANGO_ENVIRONMENT'),
-    "appConfig.json",
+    "appConfig.{django_env}.json".format(django_env= os.getenv('DJANGO_ENVIRONMENT')),
     45  # minimum interval between update checks
 )
 appconfig.update_config()
