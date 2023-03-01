@@ -23,5 +23,6 @@ jobs:
       with:
         format: 'json'
     - run: |
-        cat ${{ steps.files.outputs.removed }}
+        echo ${{ steps.files.outputs.removed }} > temp.json
+        cat temp.json
         
