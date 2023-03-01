@@ -1,0 +1,27 @@
+
+
+name: tester
+
+# Controls when the action will run. 
+on:
+  # Triggers the workflow on push or pull request events but only for the master branch
+  workflow_dispatch:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches:
+    - '.*'
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: test
+    steps:
+    - id: files
+      uses: jitterbit/get-changed-files@v1
+      with:
+        format: 'json'
+    - run: |
+        cat ${{ steps.files.outputs.removed }}
+        
