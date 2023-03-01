@@ -24,5 +24,6 @@ jobs:
         format: 'json'
     - run: |
         echo ${{ steps.files.outputs.added_modified  }} > temp.json
+        
         cat temp.json
         
